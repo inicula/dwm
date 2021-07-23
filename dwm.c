@@ -157,6 +157,7 @@ typedef struct {
 } Rule;
 
 /* function declarations */
+static int clamp(int x, int a, int b);
 static void applyrules(Client *c);
 static int applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact);
 static void arrange(Monitor *m);
@@ -228,7 +229,6 @@ static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *);
-static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void togglermaster(const Arg *arg);
 static void toggletag(const Arg *arg);
@@ -253,6 +253,12 @@ static int xerror(Display *dpy, XErrorEvent *ee);
 static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
+static void togglefullscr(const Arg* arg);
+static void leftscroll(const Arg* arg);
+static void rightscroll(const Arg* arg);
+static void togglelayout(const Arg* arg);
+static void leftscrollwh(const Arg* arg);
+static void rightscrollwh(const Arg* arg);
 
 static pid_t getparentprocess(pid_t p);
 static int isdescprocess(pid_t p, pid_t c);
@@ -311,6 +317,19 @@ struct Pertag {
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 
 /* function implementations */
+static int clamp(int x, int a, int b)
+{
+        if(x < a)
+        {
+                return a;
+        }
+        if(x > b)
+        {
+                return b;
+        }
+        return x;
+}
+
 void
 applyrules(Client *c)
 {
@@ -1274,7 +1293,7 @@ movemouse(const Arg *arg)
 
 	if (!(c = selmon->sel))
 		return;
-	if (c->isfullscreen) /* no support moving fullscreen windows by mouse */
+	if (c->isfullscreen || !c->isfloating) /* no support moving fullscreen/non-floating windows by mouse */
 		return;
 	restack(selmon);
 	ocx = c->x;
@@ -1877,15 +1896,6 @@ tile(Monitor *m)
 				ty += HEIGHT(c);
      sfacts -= c->cfact;
 		}
-}
-
-void
-togglebar(const Arg *arg)
-{
-	selmon->showbar = !selmon->showbar;
-	updatebarpos(selmon);
-	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww, bh);
-	arrange(selmon);
 }
 
 void
@@ -2501,6 +2511,85 @@ zoom(const Arg *arg)
 		if (!c || !(c = nexttiled(c->next)))
 			return;
 	pop(c);
+}
+
+
+void
+togglefullscr(const Arg* arg)
+{
+    if(selmon->sel)
+    {
+            setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
+    }
+}
+
+void
+leftscroll(const Arg* arg)
+{
+        int current_tag = selmon->tagset[selmon->seltags];
+        current_tag = current_tag >> 1;
+        if(current_tag == 0)
+        {
+                current_tag = 1 << 8;
+        }
+
+        Arg targ;
+        targ.ui = current_tag;
+        view(&targ);
+}
+
+void
+rightscroll(const Arg* arg)
+{
+        int current_tag = selmon->tagset[selmon->seltags];
+        current_tag = current_tag << 1;
+        if(current_tag == 1 << 9)
+        {
+                current_tag = 1 << 0;
+        }
+
+        Arg targ;
+        targ.ui = current_tag;
+        view(&targ);
+}
+
+void
+togglelayout(const Arg* arg)
+{
+        ++currentlayout;
+        if(currentlayout == 1)
+        {
+                ++currentlayout;
+        }
+        currentlayout = (currentlayout > 2 ? 0 : currentlayout);
+
+        Arg targ;
+        targ.v = &layouts[currentlayout];
+        setlayout(&targ);
+}
+
+void
+leftscrollwh(const Arg* arg)
+{
+        int current_tag = selmon->tagset[selmon->seltags];
+        current_tag = current_tag >> 1;
+        current_tag = clamp(current_tag, 1 << 0, 1 << 8);
+
+        Arg targ;
+        targ.ui = current_tag;
+        view(&targ);
+}
+
+void
+rightscrollwh(const Arg* arg)
+{
+        int current_tag = selmon->tagset[selmon->seltags];
+        current_tag = current_tag << 1;
+        current_tag = clamp(current_tag, 1 << 0, 1 << 8);
+
+        Arg targ;
+        targ.ui = current_tag;
+        view(&targ);
 }
 
 int
