@@ -2489,7 +2489,7 @@ leftscroll(const Arg* arg)
         current_tag = current_tag >> 1;
         if(current_tag == 0)
         {
-                current_tag = 1 << 8;
+                current_tag = 1 << (LENGTH(tags) - 1);
         }
 
         Arg targ;
@@ -2502,7 +2502,7 @@ rightscroll(const Arg* arg)
 {
         int current_tag = selmon->tagset[selmon->seltags];
         current_tag = current_tag << 1;
-        if(current_tag == 1 << 9)
+        if(current_tag == 1 << (LENGTH(tags)))
         {
                 current_tag = 1 << 0;
         }
@@ -2532,7 +2532,7 @@ leftscrollwh(const Arg* arg)
 {
         int current_tag = selmon->tagset[selmon->seltags];
         current_tag = current_tag >> 1;
-        current_tag = clamp(current_tag, 1 << 0, 1 << 8);
+        current_tag = clamp(current_tag, 1 << 0, 1 << (LENGTH(tags) - 1));
 
         Arg targ;
         targ.ui = current_tag;
@@ -2544,7 +2544,7 @@ rightscrollwh(const Arg* arg)
 {
         int current_tag = selmon->tagset[selmon->seltags];
         current_tag = current_tag << 1;
-        current_tag = clamp(current_tag, 1 << 0, 1 << 8);
+        current_tag = clamp(current_tag, 1 << 0, 1 << (LENGTH(tags) - 1));
 
         Arg targ;
         targ.ui = current_tag;
