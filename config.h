@@ -37,6 +37,7 @@ static const Rule rules[] = {
 	 */
 	/* class              instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
 	{ "st-256color",      NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ "Alacritty",        NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ "gnome-screenshot", NULL,     NULL,           0,         0,          0,           1,        -1 },
 };
 
@@ -66,7 +67,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", c5, "-nf", c6, "-sb", c7, "-sf", c5, NULL };
-static const char *termcmd[]  = { "st", NULL };
+static const char *termcmd[]  = { "alacritty", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
