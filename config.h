@@ -7,8 +7,8 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static const int rmaster            = 0;        /* 1 means master-area is initially on the right */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "Gohu GohuFont:pixelsize=14" };
-static const char dmenufont[]       = "Gohu GohuFont:pixelsize=14";
+static const char *fonts[]          = { "Berkeley Mono:pixelsize=30" };
+static const char dmenufont[]       = "Berkeley Mono:pixelsize=30";
 static const char c1[]       = "#000000";
 static const char c2[]       = "#444444";
 static const char c3[]       = "#bbbbbb";
